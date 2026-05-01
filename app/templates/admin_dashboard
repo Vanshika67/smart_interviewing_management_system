@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <div class="row-between">
+    <h2>Admin Dashboard - {{ admin_username }}</h2>
+    <a class="button-link" href="{{ url_for('admin_logout') }}">Logout</a>
+    <a class="button-link" href="/interview_prep">Interview Preparation</a>
+  </div>
+
+  {% if candidates %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Skills</th>
+          <th>Score</th>
+          <th>Status</th>
+          <th>Interview Plan</th>
+          <th>Registered At (UTC)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in candidates %}
+        <tr>
+          <td>{{ c.name }}</td>
+          <td>{{ c.email }}</td>
+          <td>{{ c.role }}</td>
+          <td>{{ ", ".join(c.skills) if c.skills else "N/A" }}</td>
+          <td>{{ c.score }}</td>
+          <td>{{ c.status }}</td>
+          <td>{{ c.interview_plan }}</td>
+          <td>{{ c.created_at.strftime('%Y-%m-%d %H:%M') if c.created_at else "-" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div style="margin-bottom:10px;">
+    <a class="button-link" href="/interview_prep">Interview Preparation</a>
+  </div>
+  {% else %}
+  <p>No candidates registered yet.</p>
+  {% endif %}
+</section>
+{% endblock %}
