@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Interview Preparation</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div class="container">
+    <h2>Interview Preparation</h2>
+
+```
+<form method="POST">
+    <input type="text" name="subject" placeholder="Enter Subject (AI, DBMS, Java...)" required>
+    <input type="text" name="topic" placeholder="Enter Topic (OOPs, Normalization...)" required>
+    <button type="submit">Generate Questions</button>
+</form>
+
+{% if questions %}
+    <h3>{{subject}} - {{topic}}</h3>
+
+    {% for q in questions %}
+        <div style="text-align:left; margin:10px;">
+            <b>Q:</b> {{q.question}} <br>
+            <b>A:</b> {{q.answer}}
+            <hr>
+        </div>
+    {% endfor %}
+{% endif %}
+```
+
+</div>
+
+</body>
+</html>
