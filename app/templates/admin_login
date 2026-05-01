@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h2>Admin Login</h2>
+  <p class="hint">
+    Local default: <strong>{{ 'admin' }}</strong> / <strong>{{ 'admin123' }}</strong>
+    Use: <strong>{{ default_admin_username }}</strong> / <strong>{{ default_admin_password }}</strong>
+    (override via <code>.env</code> using <code>ADMIN_USERNAME</code>/<code>ADMIN_PASSWORD</code>).
+  </p>
+  <form method="post" class="form-grid">
+
+    <label>Username</label>
+    <input type="text" name="username" required />
+
+    <label>Password</label>
+    <input type="password" name="password" required />
+
+    <button type="submit">Login</button>
+  </form>
+</section>
+{% endblock %}
