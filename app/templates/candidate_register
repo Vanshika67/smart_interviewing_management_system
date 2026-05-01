@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+  <h2>Candidate Registration</h2>
+  <form method="post" enctype="multipart/form-data" class="form-grid">
+    <label>Full Name</label>
+    <input type="text" name="name" required />
+
+    <label>Email</label>
+    <input type="email" name="email" required />
+
+    <label>Phone</label>
+    <input type="text" name="phone" />
+
+    <label>Applied Role</label>
+    <select name="role" required>
+      {% for group, roles in role_groups.items() %}
+        <optgroup label="{{ group }}">
+          {% for r in roles %}
+            <option value="{{ r }}" {% if request.form.get('role') == r %}selected{% endif %}>
+              {{ r }}
+            </option>
+          {% endfor %}
+        </optgroup>
+      {% endfor %}
+    </select>
+
+    <label>Upload Resume (PDF/DOCX/TXT)</label>
+    <input type="file" name="resume" required />
+
+    <button type="submit">Submit Profile</button>
+  </form>
+</section>
+{% endblock %}
