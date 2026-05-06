@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- Welcome Bar -->
+<div class="cd-welcome">
+  <div class="cd-welcome-left">
+    <div class="cd-avatar">{{ candidate.name[0] | upper }}</div>
+    <div>
+      <h2>Welcome, {{ candidate.name }}!</h2>
+      <p>{{ candidate.role }} &nbsp;|&nbsp; Registered: {{ candidate.created_at.strftime('%d %b %Y') if candidate.created_at else '—' }}</p>
+    </div>
+  </div>
+  <a href="/candidate/logout" class="btn-logout">Logout</a>
+</div>
+
+<!-- Status Banner -->
+{% if candidate.status == "Selected" %}
+<div class="status-banner banner-selected">
+  🎉 Congratulations! You have been <strong>Selected</strong>. Check your email for details.
+</div>
+{% else %}
+<div class="status-banner banner-review">
+  📋 Your application is currently <strong>Under Review</strong>. Keep improving your skills!
+</div>
+{% endif %}
+
+<!-- Stats Row -->
+<div class="stats-row">
+  <div class="stat-card">
+    <div class="stat-icon">📊</div>
+    <div class="stat-label">Resume Score</div>
+    <div class="stat-value score-value">{{ candidate.score }}<span class="stat-unit">/100</span></div>
+    <div class="score-bar-bg">
+      <div class="score-bar-fill" style="width: {{ candidate.score }}%;
+        background: {% if candidate.score >= 70 %}#27ae60{% elif candidate.score >= 50 %}#f39c12{% else %}#e74c3c{% endif %};">
+      </div>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon">🏷️</div>
+    <div class="stat-label">Applied Role</div>
+    <div class="stat-value stat-role">{{ candidate.role }}</div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon">{% if candidate.status == "Selected" %}✅{% else %}⏳{% endif %}</div>
+    <div class="stat-label">Interview Status</div>
+    <div class="stat-value">
+      <span class="badge {% if candidate.status == 'Selected' %}badge-selected{% else %}badge-review{% endif %}">
+        {{ candidate.status }}
+      </span>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon">🧠</div>
+    <div class="stat-label">Skills Detected</div>
+    <div class="stat-value">{{ candidate.skills | length }}</div>
+  </div>
+</div>
+
+<!-- Two Column Layout -->
+<div class="cd-two-col">
+
+  <!-- Left: Skills + Interview Plan -->
+  <div class="cd-col">
+    <div class="card cd-card">
+      <h3>🛠️ Your Detected Skills</h3>
+      {% if candidate.skills %}
+        <div class="skills-grid">
+          {% for skill in candidate.skills %}
+            <span class="skill-tag">{{ skill }}</span>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="empty-msg">No skills detected from resume. Try uploading a more detailed resume.</p>
+      {% endif %}
+    </div>
+
+    <div class="card cd-card">
+      <h3>📋 Your Interview Plan</h3>
+      {% if candidate.interview_plan %}
+        <div class="plan-steps">
+          {% set rounds = candidate.interview_plan.split('|') %}
+          {% for round in rounds %}
+            <div class="plan-step">
+              <span class="plan-num">{{ loop.index }}</span>
+              <span>{{ round.strip() }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="empty-msg">Interview plan not assigned yet.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Right: AI Suggestions -->
+  <div class="cd-col">
+    <div class="card cd-card suggestions-card">
+      {% if candidate.status == "Selected" %}
+        <h3>🚀 Skills to Grow for Promotion</h3>
+        <p class="suggestions-subtitle">
+          You're in! Here's what you should learn to grow faster in your company and industry.
+        </p>
+      {% else %}
+        <h3>💡 Skills to Crack Your Next Interview</h3>
+        <p class="suggestions-subtitle">
+          Don't give up! Focus on these areas to improve and get selected next time.
+        </p>
+      {% endif %}
+
+      {% if suggestions %}
+        <div class="suggestions-list">
+          {% for item in suggestions %}
+            <div class="suggestion-item">
+              <div class="suggestion-icon">
+                {% if candidate.status == "Selected" %}📈{% else %}🎯{% endif %}
+              </div>
+              <div class="suggestion-text">
+                <strong>{{ item.skill }}</strong>
+                <p>{{ item.reason }}</p>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="empty-msg">AI suggestions could not be loaded. Please refresh the page.</p>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+
+<!-- Interview Practice CTA -->
+<div class="card practice-cta">
+  <div class="practice-cta-left">
+    <div class="practice-icon">💬</div>
+    <div>
+      <h3>Practice Interview Questions</h3>
+      <p>Choose a subject and topic — get 20 AI-generated Q&amp;As to practice right now.</p>
+    </div>
+  </div>
+  <a href="/interview/prep" class="btn-primary">Start Practice →</a>
+</div>
+
+<style>
+  .cd-welcome {
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: #fff; border-radius: 14px; padding: 1.4rem 1.8rem; margin-bottom: 1.2rem;
+  }
+  .cd-welcome-left { display: flex; align-items: center; gap: 1rem; }
+  .cd-avatar {
+    width: 52px; height: 52px; background: #e94560; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .cd-welcome h2 { margin: 0; font-size: 1.3rem; }
+  .cd-welcome p  { margin: 0.2rem 0 0; font-size: 0.85rem; opacity: 0.75; }
+  .btn-logout {
+    background: rgba(255,255,255,0.15); color: #fff;
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 0.45rem 1.1rem; border-radius: 8px;
+    text-decoration: none; font-size: 0.85rem; transition: background 0.2s;
+  }
+  .btn-logout:hover { background: rgba(255,255,255,0.25); }
+
+  .status-banner { border-radius: 10px; padding: 0.9rem 1.2rem; margin-bottom: 1.2rem; font-size: 0.95rem; }
+  .banner-selected { background: #d4edda; border: 1px solid #27ae60; color: #155724; }
+  .banner-review   { background: #fff3cd; border: 1px solid #f39c12; color: #7d5a00; }
+
+  .stats-row {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem; margin-bottom: 1.4rem;
+  }
+  .stat-card {
+    background: #fff; border-radius: 12px; padding: 1.2rem 1rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07); text-align: center;
+  }
+  .stat-icon  { font-size: 1.6rem; margin-bottom: 0.4rem; }
+  .stat-label { font-size: 0.78rem; color: #888; text-transform: uppercase; letter-spacing: 0.05em; }
+  .stat-value { font-size: 1.5rem; font-weight: 700; color: #1a1a2e; margin-top: 0.3rem; }
+  .stat-role  { font-size: 0.95rem; margin-top: 0.5rem; }
+  .stat-unit  { font-size: 0.9rem; color: #aaa; font-weight: 400; }
+  .score-bar-bg { height: 6px; background: #eee; border-radius: 3px; margin-top: 0.7rem; overflow: hidden; }
+  .score-bar-fill { height: 100%; border-radius: 3px; transition: width 1s ease; }
+
+  .badge { display: inline-block; padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.82rem; font-weight: 600; }
+  .badge-selected { background: #d4edda; color: #155724; }
+  .badge-review   { background: #fff3cd; color: #7d5a00; }
+
+  .cd-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1.4rem; }
+  @media (max-width: 768px) { .cd-two-col { grid-template-columns: 1fr; } }
+  .cd-col { display: flex; flex-direction: column; gap: 1.2rem; }
+  .cd-card { padding: 1.4rem; }
+  .cd-card h3 { margin: 0 0 1rem; font-size: 1rem; color: #1a1a2e; }
+
+  .skills-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .skill-tag {
+    background: #eef2ff; color: #3730a3; border: 1px solid #c7d2fe;
+    border-radius: 20px; padding: 0.25rem 0.75rem; font-size: 0.82rem; font-weight: 500;
+  }
+
+  .plan-steps { display: flex; flex-direction: column; gap: 0.6rem; }
+  .plan-step {
+    display: flex; align-items: flex-start; gap: 0.8rem;
+    background: #f8f9fa; border-radius: 8px; padding: 0.6rem 0.8rem;
+    font-size: 0.88rem; color: #444;
+  }
+  .plan-num {
+    width: 22px; height: 22px; background: #1a1a2e; color: #fff;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 0.72rem; font-weight: 700; flex-shrink: 0;
+  }
+
+  .suggestions-card { border-top: 3px solid #e94560; }
+  .suggestions-subtitle { font-size: 0.85rem; color: #666; margin-bottom: 1rem; }
+  .suggestions-list { display: flex; flex-direction: column; gap: 0.8rem; }
+  .suggestion-item {
+    display: flex; align-items: flex-start; gap: 0.8rem;
+    background: #f8f9fa; border-radius: 10px; padding: 0.8rem 1rem;
+  }
+  .suggestion-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 0.1rem; }
+  .suggestion-text strong { font-size: 0.92rem; color: #1a1a2e; display: block; margin-bottom: 0.2rem; }
+  .suggestion-text p { font-size: 0.82rem; color: #666; margin: 0; line-height: 1.4; }
+
+  .practice-cta {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1rem; padding: 1.4rem 1.8rem;
+  }
+  .practice-cta-left { display: flex; align-items: center; gap: 1rem; }
+  .practice-icon { font-size: 2rem; flex-shrink: 0; }
+  .practice-cta h3 { margin: 0; font-size: 1rem; color: #1a1a2e; }
+  .practice-cta p  { margin: 0.2rem 0 0; font-size: 0.85rem; color: #666; }
+  .btn-primary {
+    display: inline-block; background: #e94560; color: #fff;
+    padding: 0.6rem 1.4rem; border-radius: 8px; text-decoration: none;
+    font-weight: 600; font-size: 0.9rem; white-space: nowrap; transition: background 0.2s;
+  }
+  .btn-primary:hover { background: #c0392b; }
+
+  .empty-msg { color: #aaa; font-size: 0.88rem; font-style: italic; }
+</style>
+
+{% endblock %}
