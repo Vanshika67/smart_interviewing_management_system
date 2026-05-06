@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="card auth-card">
+  <div class="auth-header">
+    <div class="auth-icon">🎯</div>
+    <h2>Candidate Login</h2>
+    <p class="auth-subtitle">Enter your registered email and phone number to view your dashboard</p>
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+          <span>⚠️</span> {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <form method="post" action="/candidate/login" class="form-grid">
+    <label>Email Address</label>
+    <input type="email" name="email" placeholder="Enter your registered email" required autocomplete="email" />
+
+    <label>Phone Number</label>
+    <input type="text" name="phone" placeholder="Enter your registered phone number" required autocomplete="tel" />
+
+    <button type="submit" class="btn-primary">View My Dashboard →</button>
+  </form>
+
+  <div class="auth-footer">
+    <p>Not registered yet? Ask your admin to register you first.</p>
+  </div>
+</section>
+
+<style>
+  .auth-card { max-width: 460px; margin: 3rem auto; }
+  .auth-header { text-align: center; margin-bottom: 2rem; }
+  .auth-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
+  .auth-header h2 { margin: 0.25rem 0; font-size: 1.6rem; }
+  .auth-subtitle { color: #666; font-size: 0.92rem; margin-top: 0.4rem; }
+  .alert {
+    background: #fff3cd; border: 1px solid #ffc107;
+    border-radius: 8px; padding: 0.75rem 1rem;
+    margin-bottom: 1rem; font-size: 0.9rem;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .alert-error { background: #fdecea; border-color: #e74c3c; color: #c0392b; }
+  .auth-footer { text-align: center; margin-top: 1.5rem; font-size: 0.85rem; color: #888; }
+</style>
+
+{% endblock %}
