@@ -208,7 +208,7 @@ Get your free Groq API key at: [https://console.groq.com](https://console.groq.c
 ## 👩‍💻 Developer
 
 **Vanshika**
-Smart Interview Management System — Built with Flask, MongoDB & Groq AI
+Smart Interview Management System — Built with Flask, MongoDB & Groq AI,html,css and javascript
 
 ---
 
